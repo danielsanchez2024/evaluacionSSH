@@ -1,0 +1,40 @@
+services:
+  nginx:
+    build: ./nginx
+    container_name: nginx_server
+    ports:
+      - "8081:8081"
+      - "8082:8082"
+      - "443:443"
+    networks:
+      - internal
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/html:/usr/share/nginx/html
+    environment:
+      - NGINX_HOST=localhost
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "512M"
+
+  ssh:
+    build: ./ssh
+    container_name: ssh_server
+    ports:
+      - "2222:22"
+    networks:
+      - internal
+    environment:
+      - SSH_KEY_PATH=/home/developer/.ssh
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "256M"
+
+networks:
+  internal:
+    driver: bridge
+
